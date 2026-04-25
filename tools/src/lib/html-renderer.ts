@@ -47,6 +47,19 @@ const checks = {
   INFERRED: document.getElementById('show-inferred'),
   AMBIGUOUS: document.getElementById('show-ambiguous')
 };
+function updateGraphHealth(){
+  const canvas = document.querySelector('#graph canvas');
+  window.__GRAPH_HEALTH__ = {
+    nodes: GRAPH_DATA.nodes.length,
+    edges: GRAPH_DATA.edges.length,
+    visibleNodes: nodes.get({filter:n=>n.hidden !== true}).length,
+    internalVisibleNodes: network.body.nodeIndices.length,
+    canvasCount: document.querySelectorAll('#graph canvas').length,
+    canvasWidth: canvas ? canvas.width : 0,
+    canvasHeight: canvas ? canvas.height : 0,
+    visNetworkSource: Array.from(document.scripts).map(s=>s.src || 'inline').find(src=>src.includes('vis-network')) || ''
+  };
+}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function apply(){
   const q = search.value.toLowerCase().trim();
@@ -54,6 +67,7 @@ function apply(){
   nodes.update(GRAPH_DATA.nodes.map(n=>({id:n.id,hidden:q ? !n.label.toLowerCase().includes(q) : false})));
   edges.update(GRAPH_DATA.edges.map(e=>({id:e.id,hidden:!allowed.has(e.type)})));
   stats.textContent = GRAPH_DATA.nodes.length + ' nodes · ' + GRAPH_DATA.edges.length + ' edges · ' + GRAPH_DATA.stats.community_count + ' groups';
+  updateGraphHealth();
 }
 function openNode(id){
   const n = nodeMap.get(id);
@@ -68,8 +82,8 @@ closeBtn.onclick = () => drawer.classList.remove('open');
 search.oninput = apply;
 Object.values(checks).forEach(el => el.onchange = apply);
 apply();
-network.once('stabilized', () => network.fit({animation:false}));
-setTimeout(() => network.fit({animation:false}), 500);
+network.once('stabilized', () => { network.fit({animation:false}); updateGraphHealth(); });
+setTimeout(() => { network.fit({animation:false}); updateGraphHealth(); }, 500);
 `;
 
 export function renderGraphHtml(title: string, data: GraphData, visNetworkSrc: string): string {

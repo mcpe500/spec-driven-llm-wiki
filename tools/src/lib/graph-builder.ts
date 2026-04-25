@@ -18,11 +18,11 @@ const TYPE_COLORS: Record<NodeType, string> = {
   unknown: "#9E9E9E"
 };
 
-const EDGE_COLORS: Record<string, string> = {
+const EDGE_COLORS = {
   EXTRACTED: "#94A3B8",
   INFERRED: "#FF5722",
   AMBIGUOUS: "#BDBDBD"
-};
+} as const;
 
 function inferType(relativePath: string, frontmatterType?: string): NodeType {
   if (frontmatterType && ["component", "spec", "decision", "pattern", "concept", "entity", "synthesis"].includes(frontmatterType)) {
