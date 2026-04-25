@@ -26,7 +26,8 @@ npm run serve-graph
 
 Then open **http://localhost:8080/graph.html** in your browser.
 
-> **Note:** Edge/Chrome may block graph visualization when opened via `file://` (Tracking Prevention errors). Use HTTP server for reliable viewing.
+> **Note:** Always use `/graph.html`, not `/graph`.
+> Edge/Chrome may block graph visualization when opened via `file://`. Use HTTP server for reliable viewing.
 
 ## First Agent Task
 

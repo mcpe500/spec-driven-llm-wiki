@@ -12,7 +12,8 @@
     "lint-repo": "tsx src/lint-repo.ts"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "vis-network": "^10.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.12.0",

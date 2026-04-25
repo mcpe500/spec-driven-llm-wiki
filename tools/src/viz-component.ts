@@ -40,5 +40,5 @@ const outputDir = path.join(config.repoRoot, "graph", "components");
 mkdirSync(outputDir, { recursive: true });
 const slug = path.basename(node.id).replace(/[^a-z0-9_-]+/gi, "-").toLowerCase();
 const subgraph = componentSubgraph(node.id, graph, 2);
-writeFileSync(path.join(outputDir, `${slug}.html`), renderGraphHtml(`${node.label} - Component Graph`, subgraph), "utf8");
+writeFileSync(path.join(outputDir, `${slug}.html`), renderGraphHtml(`${node.label} - Component Graph`, subgraph, "../lib/vis-network.min.js"), "utf8");
 console.log(`component graph written: graph/components/${slug}.html`);

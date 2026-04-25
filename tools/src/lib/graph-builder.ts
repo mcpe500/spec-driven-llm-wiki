@@ -1,5 +1,7 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { detectCommunities } from "./community";
 import { extractWikilinks, pageId, pageStem, preview, readKnowledgePages } from "./wiki-reader";
 import { componentSubgraph, renderGraphHtml } from "./html-renderer";
@@ -36,6 +38,20 @@ function inferType(relativePath: string, frontmatterType?: string): NodeType {
 
 function edgeId(from: string, to: string, type: string): string {
   return `${from}->${to}:${type}`;
+}
+
+function copyVisNetworkBundle(graphDir: string): void {
+  const libDir = path.join(graphDir, "lib");
+  mkdirSync(libDir, { recursive: true });
+  try {
+    const require = createRequire(import.meta.url);
+    const src = require.resolve("vis-network/standalone/umd/vis-network.min.js");
+    copyFileSync(src, path.join(libDir, "vis-network.min.js"));
+  } catch {
+    throw new Error(
+      "vis-network is not installed. Run npm install in tools/, then rerun npm run build-graph."
+    );
+  }
 }
 
 export async function buildGraph(config: EnvConfig): Promise<GraphData> {
@@ -113,12 +129,13 @@ export function writeGraphOutputs(config: EnvConfig, graph: GraphData): void {
   const graphDir = path.join(config.repoRoot, "graph");
   const componentDir = path.join(graphDir, "components");
   mkdirSync(componentDir, { recursive: true });
+  copyVisNetworkBundle(graphDir);
   writeFileSync(path.join(graphDir, "graph.json"), JSON.stringify(graph, null, 2), "utf8");
-  writeFileSync(path.join(graphDir, "graph.html"), renderGraphHtml("Spec-Driven LLM Wiki Graph", graph), "utf8");
+  writeFileSync(path.join(graphDir, "graph.html"), renderGraphHtml("Spec-Driven LLM Wiki Graph", graph, "./lib/vis-network.min.js"), "utf8");
 
   for (const node of graph.nodes.filter((n) => n.type === "component")) {
     const slug = path.basename(node.id).replace(/[^a-z0-9_-]+/gi, "-").toLowerCase();
     const subgraph = componentSubgraph(node.id, graph, 2);
-    writeFileSync(path.join(componentDir, `${slug}.html`), renderGraphHtml(`${node.label} - Component Graph`, subgraph), "utf8");
+    writeFileSync(path.join(componentDir, `${slug}.html`), renderGraphHtml(`${node.label} - Component Graph`, subgraph, "../lib/vis-network.min.js"), "utf8");
   }
 }

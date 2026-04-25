@@ -19,6 +19,7 @@
 
 - `graph/graph.json`
 - `graph/graph.html`
+- `graph/lib/vis-network.min.js`
 - `graph/components/*.html`
 
 Generated files should not be manually edited.

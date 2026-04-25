@@ -72,7 +72,7 @@ network.once('stabilized', () => network.fit({animation:false}));
 setTimeout(() => network.fit({animation:false}), 500);
 `;
 
-export function renderGraphHtml(title: string, data: GraphData): string {
+export function renderGraphHtml(title: string, data: GraphData, visNetworkSrc: string): string {
   const safeTitle = escapeHtml(title);
   const graphJson = JSON.stringify(data).replace(/<\/script>/g, "<\\/script>");
   return `<!doctype html>
@@ -81,7 +81,7 @@ export function renderGraphHtml(title: string, data: GraphData): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${safeTitle}</title>
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="${visNetworkSrc}"></script>
 <style>${style}</style>
 </head>
 <body>
