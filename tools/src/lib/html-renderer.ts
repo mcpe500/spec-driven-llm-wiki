@@ -35,7 +35,7 @@ const container = document.getElementById('graph');
 const network = new vis.Network(container,{nodes,edges},{
   nodes:{shape:'dot',font:{color:'#f9fafb',strokeWidth:4,strokeColor:'#111827'},borderWidth:2,scaling:{min:8,max:36}},
   edges:{arrows:{to:{enabled:true,scaleFactor:.35}},smooth:{type:'continuous'},color:{inherit:false}},
-  physics:{stabilization:{iterations:220},barnesHut:{gravitationalConstant:-5200,springLength:180,springConstant:.025,damping:.18}},
+  physics:{stabilization:{enabled:false},barnesHut:{gravitationalConstant:-5200,springLength:180,springConstant:.025,damping:.18}},
   interaction:{hover:true,tooltipDelay:120,hideEdgesOnDrag:true,hideEdgesOnZoom:true}
 });
 const search = document.getElementById('search');
@@ -72,6 +72,7 @@ apply();
 
 export function renderGraphHtml(title: string, data: GraphData): string {
   const safeTitle = escapeHtml(title);
+  const graphJson = JSON.stringify(data).replace(/<\/script>/g, "<\\/script>");
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -93,7 +94,7 @@ export function renderGraphHtml(title: string, data: GraphData): string {
 <div id="stats"></div>
 <div id="graph"></div>
 <aside id="drawer"><button id="close">Close</button><h2 id="drawer-title"></h2><p id="drawer-meta"></p><pre id="drawer-content"></pre></aside>
-<script>const GRAPH_DATA=${JSON.stringify(data)};${script}</script>
+<script>const GRAPH_DATA=${graphJson};${script}</script>
 </body>
 </html>`;
 }

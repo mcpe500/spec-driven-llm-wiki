@@ -6,6 +6,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build-graph": "tsx src/build-graph.ts",
+    "serve-graph": "tsx src/serve-graph.ts",
     "viz-component": "tsx src/viz-component.ts",
     "validate-spec": "tsx src/validate-spec.ts",
     "lint-repo": "tsx src/lint-repo.ts"

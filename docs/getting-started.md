@@ -18,6 +18,16 @@ npm run validate-spec -- --all
 npm run build-graph -- --no-infer
 ```
 
+## View Knowledge Graph
+
+```bash
+npm run serve-graph
+```
+
+Then open **http://localhost:8080/graph.html** in your browser.
+
+> **Note:** Edge/Chrome may block graph visualization when opened via `file://` (Tracking Prevention errors). Use HTTP server for reliable viewing.
+
 ## First Agent Task
 
 ```text
