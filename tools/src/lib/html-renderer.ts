@@ -35,7 +35,7 @@ const container = document.getElementById('graph');
 const network = new vis.Network(container,{nodes,edges},{
   nodes:{shape:'dot',font:{color:'#f9fafb',strokeWidth:4,strokeColor:'#111827'},borderWidth:2,scaling:{min:8,max:36}},
   edges:{arrows:{to:{enabled:true,scaleFactor:.35}},smooth:{type:'continuous'},color:{inherit:false}},
-  physics:{stabilization:{enabled:false},barnesHut:{gravitationalConstant:-5200,springLength:180,springConstant:.025,damping:.18}},
+  physics:{stabilization:{enabled:true,iterations:220},barnesHut:{gravitationalConstant:-5200,springLength:180,springConstant:.025,damping:.18}},
   interaction:{hover:true,tooltipDelay:120,hideEdgesOnDrag:true,hideEdgesOnZoom:true}
 });
 const search = document.getElementById('search');
@@ -51,7 +51,7 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function apply(){
   const q = search.value.toLowerCase().trim();
   const allowed = new Set(Object.entries(checks).filter(([,el])=>el.checked).map(([k])=>k));
-  nodes.update(GRAPH_DATA.nodes.map(n=>({id:n.id,hidden:q && !n.label.toLowerCase().includes(q)})));
+  nodes.update(GRAPH_DATA.nodes.map(n=>({id:n.id,hidden:q ? !n.label.toLowerCase().includes(q) : false})));
   edges.update(GRAPH_DATA.edges.map(e=>({id:e.id,hidden:!allowed.has(e.type)})));
   stats.textContent = GRAPH_DATA.nodes.length + ' nodes · ' + GRAPH_DATA.edges.length + ' edges · ' + GRAPH_DATA.stats.community_count + ' groups';
 }
@@ -68,6 +68,8 @@ closeBtn.onclick = () => drawer.classList.remove('open');
 search.oninput = apply;
 Object.values(checks).forEach(el => el.onchange = apply);
 apply();
+network.once('stabilized', () => network.fit({animation:false}));
+setTimeout(() => network.fit({animation:false}), 500);
 `;
 
 export function renderGraphHtml(title: string, data: GraphData): string {
